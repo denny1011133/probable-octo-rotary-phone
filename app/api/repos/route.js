@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 
 export async function GET(request) {
-  const searchQuery = 'topic:python'; //TODO
+  const searchParams = request.nextUrl.searchParams;
+  const searchQuery = searchParams.get('q');
   const accessToken = process.env.GITHUB_ACCSEETOKEN;
   const apiUrl = `https://api.github.com/search/repositories?q=${encodeURIComponent(
     searchQuery
