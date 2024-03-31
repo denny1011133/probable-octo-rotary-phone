@@ -7,11 +7,13 @@ export async function GET(request) {
   const apiUrl = `https://api.github.com/search/repositories?q=${encodeURIComponent(
     searchQuery
   )}`;
+
   const res = await fetch(apiUrl, {
     headers: {
       Authorization: `token ${accessToken}`,
     },
   });
+
   const resToJSON = await res.json();
   return NextResponse.json({ response: resToJSON });
 }

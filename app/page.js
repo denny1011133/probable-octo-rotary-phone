@@ -1,20 +1,16 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function HomePage() {
   const [search, setSearch] = useState('');
   const [repos, setRepos] = useState([]);
-
-  async function getData(search) {
+  const [loading, setLoading] = useState(false);
+  async function getRepos(search) {
     const res = await fetch(`http://localhost:3000/api/repos?q=${search}`);
-    if (!res.ok) {
-      // This will activate the closest `error.js` Error Boundary
-      throw new Error('Failed to fetch data');
-    }
 
     return res.json();
   }
-
   return (
     <>
       <div className="flex flex-row w-full items-center p-8 ">
@@ -26,32 +22,51 @@ export default function HomePage() {
         />
         <label
           htmlFor="search"
-          className="text-lg m-2 bg-blue-500 rounded-md p-1"
-          onClick={(e) =>
-            getData(search).then((res) => {
-              setRepos(res.response.items);
-            })
-          }
+          className={`text-lg m-2 bg-blue-500 rounded-md p-1 cursor-pointer`}
+          onClick={(e) => {
+            if (search) {
+              setLoading(true);
+              getRepos(search).then((res) => {
+                console.log(res);
+                setRepos(res.response.items);
+                setLoading(false);
+              });
+            } else {
+              alert('empty search!');
+            }
+          }}
         >
           Search
         </label>
       </div>
-      <ul role="list" className="divide-y divide-gray-700 ">
-        {repos.map((repo) => (
-          <li key={repo.id} className="p-8">
-            <div className="flex min-w-0 gap-x-4">
-              <div className="min-w-0 flex-auto">
-                <p className="text-sm font-semibold leading-6 text-gray-900">
-                  {repo.full_name}
-                </p>
-                <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                  {repo.description}
-                </p>
-              </div>
+      {loading ? (
+        <div className="flex justify-center items-center">
+          <CircularProgress />
+        </div>
+      ) : (
+        <ul role="list" className="divide-y divide-gray-700 ">
+          {repos.length ? (
+            repos.map((repo) => (
+              <li key={repo.id} className="p-8">
+                <div className="flex min-w-0 gap-x-4">
+                  <div className="min-w-0 flex-auto">
+                    <p className="text-sm font-semibold leading-6 text-gray-900">
+                      {repo.full_name}
+                    </p>
+                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                      {repo.description}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            ))
+          ) : (
+            <div className="flex justify-center items-center">
+              No result currently.
             </div>
-          </li>
-        ))}
-      </ul>
+          )}
+        </ul>
+      )}
     </>
   );
 }
