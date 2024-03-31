@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request) {
   const searchParams = request.nextUrl.searchParams;
-  const searchQuery = searchParams.get('q');
+  const searchQuery = searchParams.get('search');
+  const currentPage = searchParams.get('currentPage');
   const accessToken = process.env.GITHUB_ACCSEETOKEN;
-  const apiUrl = `https://api.github.com/search/repositories?q=${encodeURIComponent(
+  const apiUrl = `https://api.github.com/search/repositories?page=${currentPage}&q=${encodeURIComponent(
     searchQuery
   )}`;
 
