@@ -18,33 +18,31 @@ export default function HomePage() {
   }
 
   function handleSearch(action) {
-    if (search) {
-      setLoading(true);
-      if (action === 'next') {
-        getRepos(search, currentPage + 1).then((res) => {
-          console.log(res);
-          const totalPages = Math.ceil(
-            res.response.total_count / res.response.items.length
-          );
-          setTotalPages(totalPages);
-          setRepos(res.response.items);
-          setLoading(false);
-          setCurrentPage((prev) => prev + 1);
-        });
-      } else {
-        getRepos(search, currentPage).then((res) => {
-          console.log(res);
-          const totalPages = Math.ceil(
-            res.response.total_count / res.response.items.length
-          );
-          setTotalPages(totalPages);
-          setRepos(res.response.items);
-          setLoading(false);
-        });
-      }
-    } else {
-      alert('empty search!');
+    if (!search) {
+      alert('Please enter a search query!');
+      return;
     }
+
+    setLoading(true);
+
+    let nextPage;
+    if (action === 'next') {
+      nextPage = currentPage + 1;
+    } else if (action === 'prev') {
+      nextPage = currentPage - 1;
+    } else {
+      nextPage = currentPage;
+    }
+
+    getRepos(search, nextPage).then((res) => {
+      const totalPages = Math.ceil(
+        res.response.total_count / res.response.items.length
+      );
+      setTotalPages(totalPages);
+      setRepos(res.response.items);
+      setLoading(false);
+      setCurrentPage(nextPage);
+    });
   }
 
   return (
