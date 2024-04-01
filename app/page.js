@@ -18,7 +18,7 @@ export default function HomePage() {
   }
 
   function handleSearch(action) {
-    if (!search) {
+    if (!search.trim()) {
       alert('Please enter a search query!');
       return;
     }
